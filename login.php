@@ -1,0 +1,148 @@
+<?php session_start() ?>
+<?php require_once('Connections/cryptDb.php'); ?>
+<?php
+if (!function_exists("GetSQLValueString")) {
+function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
+{
+  if (PHP_VERSION < 6) {
+    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
+  }
+
+  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
+
+  switch ($theType) {
+    case "text":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;    
+    case "long":
+    case "int":
+      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
+      break;
+    case "double":
+      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      break;
+    case "date":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;
+    case "defined":
+      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
+      break;
+  }
+  return $theValue;
+}
+}
+
+$colname_details = "-1";
+if (isset($_SESSION['username'])) {
+  $colname_details = $_SESSION['username'];
+}
+mysql_select_db($database_cryptDb, $cryptDb);
+$query_details = sprintf("SELECT username, email FROM signup WHERE username = %s ORDER BY username ASC", GetSQLValueString($colname_details, "text"));
+$details = mysql_query($query_details, $cryptDb) or die(mysql_error());
+$row_details = mysql_fetch_assoc($details);
+$totalRows_details = mysql_num_rows($details);
+?>
+<?php
+// *** Validate request to login to this site.
+if (!isset($_SESSION)) {
+  session_start();
+}
+
+$loginFormAction = $_SERVER['PHP_SELF'];
+if (isset($_GET['accesscheck'])) {
+  $_SESSION['PrevUrl'] = $_GET['accesscheck'];
+}
+
+if (isset($_POST['username'])) {
+  $loginUsername=$_POST['username'];
+  $password=MD5($_POST['pword']);
+  $MM_fldUserAuthorization = "username";
+  $MM_redirectLoginSuccess = "dasboard.php";
+  $MM_redirectLoginFailed = "failed_login.php";
+  $MM_redirecttoReferrer = false;
+  mysql_select_db($database_cryptDb, $cryptDb);
+  	
+  $LoginRS__query=sprintf("SELECT username, password_hash, username FROM signup WHERE username=%s AND password_hash=%s",
+  GetSQLValueString($loginUsername, "text"), GetSQLValueString($password, "text")); 
+   
+  $LoginRS = mysql_query($LoginRS__query, $cryptDb) or die(mysql_error());
+  $loginFoundUser = mysql_num_rows($LoginRS);
+  if ($loginFoundUser) {
+    
+    $loginStrGroup  = mysql_result($LoginRS,0,'username');
+    
+	if (PHP_VERSION >= 5.1) {session_regenerate_id(true);} else {session_regenerate_id();}
+    //declare two session variables and assign them
+    $_SESSION['MM_Username'] = $loginUsername;
+    $_SESSION['MM_UserGroup'] = $loginStrGroup;	      
+
+    if (isset($_SESSION['PrevUrl']) && false) {
+      $MM_redirectLoginSuccess = $_SESSION['PrevUrl'];	
+    }
+    header("Location: " . $MM_redirectLoginSuccess );
+  }
+  else {
+    header("Location: ". $MM_redirectLoginFailed );
+  }
+}
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>login page</title>
+<link rel="stylesheet" href="css/signup.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+
+.aside__image{
+	border-radius: 22rem;
+}
+</style>
+</head>
+
+<body>
+       
+<script type="text/javascript">
+    function myFunction() {
+  var x = document.getElementById("password");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+	
+  }
+}
+</script>
+<section class="contact">
+  <div class="container contact__container">
+        <aside class="contact__aside">
+          
+            <h2>WELCOME</h2>
+            <div>
+                <img src="images/crypt3.jpg" alt=""  class="aside__image">
+            </div>
+        </aside>
+        
+        <form action="<?php echo $loginFormAction; ?>" method="POST" name="login">
+            <div class="form__name">   
+                <input type="text" name="username" class="inp" placeholder="USERNAME" required autocomplete="off">
+
+            </div>
+        <input type="password" name="pword" id="password" class="inp" placeholder="PASSWORD" required autocomplete="off">
+       
+      <div>
+       <input type="checkbox" onclick="myFunction()" class="btn btn-primary" />Show Password
+       </div>  
+       <button type="submit" class="btn btn-primary">login</button>
+    </form>
+    
+</div>
+    
+</section>
+
+</body>
+</html>
+<?php
+mysql_free_result($details);
+?>

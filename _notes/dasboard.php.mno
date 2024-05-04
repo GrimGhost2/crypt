@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_crypt" value="name:username;datatype:string,name:email;datatype:string" />
+	<infoitem key="UD_userval" value="name:username;datatype:string,name:email;datatype:string" />
+	<infoitem key="UD_Username" value="name:username;datatype:string,name:email;datatype:string" />
+	<infoitem key="UD_username" value="name:username;datatype:string,name:email;datatype:string" />
+	<infoitem key="UD_user" value="name:username;datatype:string" />
+	<infoitem key="UD_showVal" value="name:username;datatype:string,name:email;datatype:string" />
+	<infoitem key="UD_MM_Username" value="name:username;datatype:string,name:email;datatype:string" />
+	<infoitem key="UD_userD" value="name:username;datatype:string,name:email;datatype:string" />
+</info>
