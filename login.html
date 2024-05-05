@@ -31,22 +31,6 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
   return $theValue;
 }
 }
- if ($loginFoundUser) {
-    $loginStrGroup  = mysql_result($LoginRS,0,'username');
-	if (PHP_VERSION >= 5.1) {session_regenerate_id(true);} else {session_regenerate_id();}
-	    //declare two session variables and assign them
-	    $_SESSION['MM_Username'] = $loginUsername;
-	    $_SESSION['MM_UserGroup'] = $loginStrGroup;	      
-	
-	   if (isset($_SESSION['PrevUrl']) && false) {
-	      $MM_redirectLoginSuccess = $_SESSION['PrevUrl'];	
-	    }
-	    header("Location: " . $MM_redirectLoginSuccess );
-	  }
-	  else {
-	    header("Location: ". $MM_redirectLoginFailed );
-	  }
-}
 $colname_details = "-1";
 if (isset($_SESSION['username'])) {
   $colname_details = $_SESSION['username'];
