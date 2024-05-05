@@ -41,8 +41,7 @@ $query_details = sprintf("SELECT username, email FROM signup WHERE username = %s
 $details = mysql_query($query_details, $cryptDb) or die(mysql_error());
 $row_details = mysql_fetch_assoc($details);
 $totalRows_details = mysql_num_rows($details);
-?>
-<?php
+
 // *** Validate request to login to this site.
 if (!isset($_SESSION)) {
   session_start();
